@@ -255,7 +255,7 @@ class BidiRpc(object):
         """
         if self.call is None:
             raise ValueError(
-                'Can not recv() on an RPC that has never been open()ed.')
+                'Can not recv() on an RPC that is closed.')
 
         return next(self.call)
 

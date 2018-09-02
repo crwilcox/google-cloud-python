@@ -63,7 +63,7 @@
 ## 0.35.1
 
 ### Implementation Changes
-- Catch errors when re-retying send() or recv() in addition to open() (#5402)
+- Catch errors when re-retrying send() or recv() in addition to open() (#5402)
 
 ## 0.35.0
 
