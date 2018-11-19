@@ -61,6 +61,16 @@ def unit(session):
     """Default unit test session."""
     default(session)
 
+
+@nox.session(python='3.6')
+def blacken(session):
+    """Run black.
+
+    Format code to uniform standard.
+    """
+    session.install('black')
+    session.run('black', 'google', 'tests')
+
 @nox.session(python='3.6')
 def lint(session):
     """Run linters.
@@ -68,8 +78,9 @@ def lint(session):
     Returns a failure if the linters find linting errors or sufficiently
     serious code quality issues.
     """
-    session.install('flake8', 'flake8-import-order')
+    session.install('flake8', 'flake8-import-order', 'black')
     session.install('.')
+    session.run('black', '--check', 'google', 'tests')
     session.run('flake8', 'google', 'tests')
 
 

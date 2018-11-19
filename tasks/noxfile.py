@@ -35,10 +35,35 @@ def default(session):
     # Run py.test against the unit tests.
     session.run('py.test', '--quiet', os.path.join('tests', 'unit'))
 
+
 @nox.session(python=['2.7', '3.5', '3.6', '3.7'])
 def unit(session):
     """Run the unit test suite."""
     default(session)
+
+
+@nox.session(python='3.6')
+def blacken(session):
+    """Run black.
+
+    Format code to uniform standard.
+    """
+    session.install('black')
+    session.run('black', 'google', 'tests')
+
+
+@nox.session(python='3.6')
+def lint(session):
+    """Run linters.
+
+    Returns a failure if the linters find linting errors or sufficiently
+    serious code quality issues.
+    """
+    session.install('flake8', 'flake8-import-order', 'black',  *LOCAL_DEPS)
+    session.install('.')
+    session.run('black', '--check', 'google', 'tests')
+    session.run('flake8', 'google', 'tests')
+
 
 @nox.session(python='3.6')
 def lint_setup_py(session):

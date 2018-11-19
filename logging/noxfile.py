@@ -15,7 +15,6 @@
 from __future__ import absolute_import
 
 import os
-import sys
 
 import nox
 
@@ -37,7 +36,6 @@ UNIT_TEST_DEPS = (
 def default(session, django_dep=('django',)):
     """Default unit test session.
     """
-  
     # Install all test dependencies, then install this package in-place.
     deps = UNIT_TEST_DEPS
     deps += django_dep
@@ -115,14 +113,25 @@ def system(session):
 
 
 @nox.session(python='3.6')
+def blacken(session):
+    """Run black.
+
+    Format code to uniform standard.
+    """
+    session.install('black')
+    session.run('black', 'google', 'tests')
+
+
+@nox.session(python='3.6')
 def lint(session):
     """Run linters.
 
     Returns a failure if the linters find linting errors or sufficiently
     serious code quality issues.
     """
-    session.install('flake8', *LOCAL_DEPS)
+    session.install('flake8', 'flake8-import-order', 'black',  *LOCAL_DEPS)
     session.install('.')
+    session.run('black', '--check', 'google', 'tests')
     session.run('flake8', 'google', 'tests')
 
 

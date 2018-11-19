@@ -128,6 +128,16 @@ def snippets(session):
 
 
 @nox.session(python='3.6')
+def blacken(session):
+    """Run black.
+
+    Format code to uniform standard.
+    """
+    session.install('black')
+    session.run('black', 'google', 'tests', 'docs')
+
+
+@nox.session(python='3.6')
 def lint(session):
     """Run linters.
 
@@ -137,6 +147,7 @@ def lint(session):
 
     session.install('flake8', *LOCAL_DEPS)
     session.install('.')
+    session.run('black', '--check', 'google', 'tests', 'docs')
     session.run('flake8', os.path.join('google', 'cloud', 'bigquery'))
     session.run('flake8', 'tests')
     session.run(

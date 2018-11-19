@@ -68,16 +68,26 @@ def unit_grpc_gcp(session):
 
 
 @nox.session(python='3.6')
+def blacken(session):
+    """Run black.
+
+    Format code to uniform standard.
+    """
+    session.install('black')
+    session.run('black', 'google', 'tests')
+
+
+@nox.session(python='3.6')
 def lint(session):
     """Run linters.
 
     Returns a failure if the linters find linting errors or sufficiently
     serious code quality issues.
     """
-    session.install('flake8', 'flake8-import-order')
+    session.install('flake8', 'flake8-import-order', 'black')
     session.install('.')
+    session.run('black', '--check', 'google', 'tests')
     session.run('flake8', 'google', 'tests')
-
 
 @nox.session(python='3.6')
 def lint_setup_py(session):
@@ -92,12 +102,12 @@ def lint_setup_py(session):
 # No 3.7 because pytype supports up to 3.6 only.
 @nox.session(python='3.6')
 def pytype(session):
-  """Run type-checking."""
-  session.install('.',
-                  'grpcio >= 1.8.2',
-                  'grpcio-gcp >= 0.2.2',
-                  'pytype >= 2018.9.26')
-  session.run('pytype')
+    """Run type-checking."""
+    session.install('.',
+                    'grpcio >= 1.8.2',
+                    'grpcio-gcp >= 0.2.2',
+                    'pytype >= 2018.9.26')
+    session.run('pytype')
 
 
 @nox.session(python='3.6')

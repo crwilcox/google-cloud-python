@@ -87,6 +87,14 @@ def system(session):
         *session.posargs
     )
 
+@nox.session(python='3.6')
+def blacken(session):
+    """Run black.
+
+    Format code to uniform standard.
+    """
+    session.install('black')
+    session.run('black', 'google', 'tests')
 
 @nox.session(python='3.6')
 def lint(session):
@@ -95,9 +103,11 @@ def lint(session):
     Returns a failure if the linters find linting errors or sufficiently
     serious code quality issues.
     """
-    session.install('flake8', *LOCAL_DEPS)
+    session.install('flake8', 'flake8-import-order', 'black',  *LOCAL_DEPS)
     session.install('.')
+    session.run('black', '--check', 'google', 'tests')
     session.run('flake8', 'google', 'tests')
+
 
 
 @nox.session(python='3.6')
