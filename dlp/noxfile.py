@@ -18,10 +18,7 @@ import os
 import nox
 
 
-LOCAL_DEPS = (
-    os.path.join('..', 'api_core'),
-    os.path.join('..', 'core'),
-)
+LOCAL_DEPS = (os.path.join("..", "api_core"), os.path.join("..", "core"))
 
 
 def default(session):
@@ -32,77 +29,76 @@ def default(session):
     Python corresponding to the ``nox`` binary the ``PATH`` can
     run the tests.
     """
-    session.install('mock', 'pytest', 'pytest-cov', *LOCAL_DEPS)
-    session.install('-e', '.')
+    session.install("mock", "pytest", "pytest-cov", *LOCAL_DEPS)
+    session.install("-e", ".")
 
     session.run(
-        'py.test',
-        '--quiet',
-        '--cov=google.cloud.dlp_v2',
-        '--cov-append',
-        '--cov-config=.coveragerc',
-        '--cov-report=',
-        '--cov-fail-under=97',
-        os.path.join('tests', 'unit'),
+        "py.test",
+        "--quiet",
+        "--cov=google.cloud.dlp_v2",
+        "--cov-append",
+        "--cov-config=.coveragerc",
+        "--cov-report=",
+        "--cov-fail-under=97",
+        os.path.join("tests", "unit"),
         *session.posargs
     )
 
 
-@nox.session(python=['2.7', '3.5', '3.6', '3.7'])
+@nox.session(python=["2.7", "3.5", "3.6", "3.7"])
 def unit(session):
     """Run the unit test suite."""
 
     default(session)
 
 
-@nox.session(python=['2.7', '3.6'])
+@nox.session(python=["2.7", "3.6"])
 def system(session):
     """Run the system test suite."""
 
-    if not os.environ.get('GOOGLE_APPLICATION_CREDENTIALS', ''):
-        session.skip('Credentials must be set via environment variable.')
+    if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", ""):
+        session.skip("Credentials must be set via environment variable.")
 
     # Use pre-release gRPC for system tests.
-    session.install('--pre', 'grpcio')
+    session.install("--pre", "grpcio")
 
-    session.install('pytest')
-    session.install('-e', '.')
+    session.install("pytest")
+    session.install("-e", ".")
 
-    session.run('py.test', '--quiet',
-                os.path.join('tests', 'system'), *session.posargs)
+    session.run("py.test", "--quiet", os.path.join("tests", "system"), *session.posargs)
 
 
-@nox.session(python='3.6')
+@nox.session(python="3.6")
 def blacken(session):
     """Run black.
 
     Format code to uniform standard.
     """
-    session.install('black')
-    session.run('black', 'google', 'tests')
+    session.install("black")
+    session.run("black", "google", "tests")
 
-@nox.session(python='3.6')
+
+@nox.session(python="3.6")
 def lint(session):
     """Run linters.
 
     Returns a failure if the linters find linting errors or sufficiently
     serious code quality issues.
     """
-    session.install('flake8', 'flake8-import-order', 'black',  *LOCAL_DEPS)
-    session.install('.')
-    session.run('black', '--check', 'google', 'tests')
-    session.run('flake8', 'google', 'tests')
+    session.install("flake8", "flake8-import-order", "black", *LOCAL_DEPS)
+    session.install(".")
+    session.run("black", "--check", "google", "tests")
+    session.run("flake8", "google", "tests")
 
 
-@nox.session(python='3.6')
+@nox.session(python="3.6")
 def lint_setup_py(session):
     """Verify that setup.py is valid (including RST check)."""
-    session.install('docutils', 'pygments')
-    session.run('python', 'setup.py', 'check', '--restructuredtext',
-                '--strict')
+    session.install("docutils", "pygments")
+    session.run("python", "setup.py", "check", "--restructuredtext", "--strict")
 
 
-@nox.session(python='3.6')
+@nox.session(python="3.6")
 def cover(session):
     """Run the final coverage report.
 
@@ -110,7 +106,6 @@ def cover(session):
     test runs (not system test runs), and then erases coverage data.
     """
     session.chdir(os.path.dirname(__file__))
-    session.install('coverage', 'pytest-cov')
-    session.run('coverage', 'report', '--show-missing', '--fail-under=100')
-    session.run('coverage', 'erase')
-
+    session.install("coverage", "pytest-cov")
+    session.run("coverage", "report", "--show-missing", "--fail-under=100")
+    session.run("coverage", "erase")

@@ -17,23 +17,27 @@ import os
 import nox
 
 
-@nox.session(python='3.6')
+@nox.session(python="3.6")
 def docs(session):
     """Build the docs."""
 
     # Install Sphinx and also all of the google-cloud-* packages.
     session.chdir(os.path.realpath(os.path.dirname(__file__)))
-    session.install('-r', os.path.join('docs', 'requirements.txt'))
+    session.install("-r", os.path.join("docs", "requirements.txt"))
 
     # Build the docs!
-    session.run(
-        'bash', os.path.join('.', 'test_utils', 'scripts', 'update_docs.sh'))
+    session.run("bash", os.path.join(".", "test_utils", "scripts", "update_docs.sh"))
 
 
-@nox.session(python='3.6')
+@nox.session(python="3.6")
 def lint_setup_py(session):
     """Verify that setup.py is valid (including RST check)."""
 
-    session.install('docutils', 'Pygments')
+    session.install("docutils", "Pygments")
     session.run(
-        'python', 'legacy/google-cloud/setup.py', 'check', '--restructuredtext', '--strict')
+        "python",
+        "legacy/google-cloud/setup.py",
+        "check",
+        "--restructuredtext",
+        "--strict",
+    )

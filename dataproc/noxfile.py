@@ -19,9 +19,7 @@ import os
 import nox
 
 
-LOCAL_DEPS = (
-    os.path.join('..', 'api_core'),
-)
+LOCAL_DEPS = (os.path.join("..", "api_core"),)
 
 
 def default(session):
@@ -33,70 +31,70 @@ def default(session):
     run the tests.
     """
     # Install all test dependencies, then install this package in-place.
-    session.install('mock', 'pytest', 'pytest-cov', *LOCAL_DEPS)
-    session.install('-e', '.')
+    session.install("mock", "pytest", "pytest-cov", *LOCAL_DEPS)
+    session.install("-e", ".")
 
     # Run py.test against the unit tests.
     session.run(
-        'py.test',
-        '--quiet',
-        '--cov=google.cloud.dataproc',
-        '--cov=google.cloud.dataproc_v1',
-        '--cov=tests.unit',
-        '--cov-append',
-        '--cov-config=.coveragerc',
-        '--cov-report=',
-        os.path.join('tests', 'unit'),
+        "py.test",
+        "--quiet",
+        "--cov=google.cloud.dataproc",
+        "--cov=google.cloud.dataproc_v1",
+        "--cov=tests.unit",
+        "--cov-append",
+        "--cov-config=.coveragerc",
+        "--cov-report=",
+        os.path.join("tests", "unit"),
         *session.posargs
     )
 
 
-@nox.session(python=['2.7', '3.5', '3.6', '3.7'])
+@nox.session(python=["2.7", "3.5", "3.6", "3.7"])
 def unit(session):
     """Run the unit test suite."""
     default(session)
 
 
-@nox.session(python=['2.7', '3.7'])
+@nox.session(python=["2.7", "3.7"])
 def system(session):
     """Run the system test suite."""
 
-    if not os.environ.get('GOOGLE_APPLICATION_CREDENTIALS', ''):
-        session.skip('Credentials must be set via environment variable.')
+    if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", ""):
+        session.skip("Credentials must be set via environment variable.")
     # Use pre-release gRPC for system tests.
-    session.install('--pre', 'grpcio')
+    session.install("--pre", "grpcio")
 
-    session.install('pytest')
-    session.install('-e', '.')
+    session.install("pytest")
+    session.install("-e", ".")
 
-    session.run('py.test', '--quiet', os.path.join('tests', 'system'),
-                *session.posargs)
+    session.run("py.test", "--quiet", os.path.join("tests", "system"), *session.posargs)
 
 
-@nox.session(python='3.6')
+@nox.session(python="3.6")
 def blacken(session):
     """Run black.
 
     Format code to uniform standard.
     """
-    session.install('black')
-    session.run('black', 'google', 'tests')
+    session.install("black")
+    session.run("black", "google", "tests")
 
-@nox.session(python='3.6')
+
+@nox.session(python="3.6")
 def lint(session):
     """Run linters.
 
     Returns a failure if the linters find linting errors or sufficiently
     serious code quality issues.
     """
-    session.install('flake8', 'flake8-import-order', 'black')
-    session.install('.')
-    session.run('black', '--check', 'google', 'tests')
-    session.run('flake8', 'google', 'tests')
+    session.install("flake8", "flake8-import-order", "black")
+    session.install(".")
+    session.run("black", "--check", "google", "tests")
+    session.run("flake8", "google", "tests")
 
-@nox.session(python='3.6')
+
+@nox.session(python="3.6")
 def lint_setup_py(session):
     """Verify that setup.py is valid (including RST check)."""
-    session.install('docutils', 'pygments')
-    session.run('python', 'setup.py', 'check', '--restructuredtext',
-                '--strict')
+    session.install("docutils", "pygments")
+    session.run("python", "setup.py", "check", "--restructuredtext", "--strict")
